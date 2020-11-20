@@ -18,11 +18,11 @@ def convert_name_phone(filename):
 
     phone_numbers = []
     last_names = []
+
     for rec in df.values:
         # for converting phone numbers
         num = '+63' + str(rec[0])
-        if str(rec[0]).endswith('.0'):
-            num = '+63' + str(rec[0])[:-2]
+        if str(rec[0]).endswith('.0'): num = '+63' + str(rec[0])[:-2]
         phone_numbers.append(num)
 
         # for getting lastnames out of full names
