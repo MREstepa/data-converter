@@ -80,6 +80,7 @@ if __name__ == '__main__':
         for x in range(len(filename.split('/'))-1)]]
     )[1:]
 
+    # switch choices
     if switch == 1: data, output_file = convert_name_phone(filename)
     if switch == 2: data, output_file = convert_cod(filename)
 
