@@ -41,7 +41,7 @@ def convert_cod(filename):
     "Calculate COD"
 
     sheet_name = "cod"
-    columns = ['location','weight','parcel_value','processing_fee']
+    columns = ['location','weight','parcel_value','processing_fee','packaging_fee']
 
     data = pd.read_excel (filename, sheet_name=sheet_name) 
     df = pd.DataFrame(data, columns=columns)
@@ -49,13 +49,16 @@ def convert_cod(filename):
     cods = []
     for rec in df.values:
         shipping_rate = 0
+
         location = str(rec[0])
         weight = float(rec[1])
         parcel_value = int(rec[2])
         processing_fee = float(rec[3])
+        packaging_fee = float(rec[4])
+
 
         shipping_rate = get_shipping_rate(location, weight)
-        to_collect = shipping_rate + processing_fee
+        to_collect = shipping_rate + processing_fee + packaging_fee
         cod = math.ceil(( (to_collect * .027) + to_collect) + ( (parcel_value / 500) * 5 ))
         cods.append(cod)
 
@@ -66,9 +69,34 @@ def convert_cod(filename):
 
     return data, output_file
 
+def calc_shipping(filename):
+    "Calculate shipping"
+
+    sheet_name = "shipping"
+    columns = ['location','weight']
+
+    data = pd.read_excel (filename, sheet_name=sheet_name) 
+    df = pd.DataFrame(data, columns=columns)
+
+    shipping = []
+    for rec in df.values:
+        shipping_rate = 0
+        location = str(rec[0])
+        weight = float(rec[1])
+
+        shipping_rate = get_shipping_rate(location, weight)
+        shipping.append(shipping_rate)
+
+    data = {
+        'Shipping': shipping
+    }
+    output_file = "/converted-shipping.xlsx"
+
+    return data, output_file
+
 
 if __name__ == '__main__':
-    switch = int(input("(1) Phone Number & Lastname\n(2) COD\nSwitch >>> "))
+    switch = int(input("(1) Phone Number & Lastname\n(2) COD\n(3) Calculate Shipping\nSwitch >>> "))
 
     # get file name
     Tk().withdraw()
@@ -83,6 +111,7 @@ if __name__ == '__main__':
     # switch choices
     if switch == 1: data, output_file = convert_name_phone(filename)
     if switch == 2: data, output_file = convert_cod(filename)
+    if switch == 3: data, output_file = calc_shipping(filename)
 
     converted = pd.DataFrame(data)
 
